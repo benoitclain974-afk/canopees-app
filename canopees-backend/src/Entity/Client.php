@@ -83,9 +83,14 @@ class Client
         $this->telephone = $telephone;
         return $this;
     }
+public function getDemandesDevis(): Collection
+{
+    return $this->demandesDevis;
+}
 
-    public function getDemandesDevis(): Collection
-    {
-        return $this->demandesDevis;
-    }
+public function __toString(): string
+{
+    return $this->prenom . ' ' . $this->nom;
+}
+
 }

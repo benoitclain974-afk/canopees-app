@@ -3,28 +3,38 @@
 namespace App\Entity;
 
 use App\Repository\OuvrierRepository;
+use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: OuvrierRepository::class)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['ouvrier:read']]
+)]
 class Ouvrier
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['ouvrier:read', 'demande:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['ouvrier:read', 'demande:read'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['ouvrier:read', 'demande:read'])]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['ouvrier:read'])]
     private ?string $role = null;
 
     #[ORM\OneToMany(targetEntity: DemandeDevis::class, mappedBy: 'ouvrier')]
+    #[Groups(['ouvrier:read'])]
     private Collection $demandesDevis;
 
     public function __construct()
@@ -70,6 +80,9 @@ class Ouvrier
         return $this;
     }
 
+    /**
+     * @return Collection<int, DemandeDevis>
+     */
     public function getDemandesDevis(): Collection
     {
         return $this->demandesDevis;

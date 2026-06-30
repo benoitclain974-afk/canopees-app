@@ -3,26 +3,36 @@
 namespace App\Entity;
 
 use App\Repository\PrestationRepository;
+use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PrestationRepository::class)]
+#[ApiResource(
+    uriTemplate: '/prestation',
+    normalizationContext: ['groups' => ['prestation:read']]
+)]
 class Prestation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['prestation:read', 'oeuvre:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['prestation:read', 'oeuvre:read'])]
     private ?string $titre = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['prestation:read'])]
     private ?string $contenuDetaille = null;
 
     #[ORM\OneToMany(targetEntity: Oeuvre::class, mappedBy: 'prestation')]
+    #[Groups(['prestation:read'])] 
     private Collection $oeuvres;
 
     #[ORM\OneToMany(targetEntity: DemandeDevis::class, mappedBy: 'prestation')]
@@ -61,6 +71,9 @@ class Prestation
         return $this;
     }
 
+    /**
+     * @return Collection<int, Oeuvre>
+     */
     public function getOeuvres(): Collection
     {
         return $this->oeuvres;
@@ -85,6 +98,9 @@ class Prestation
         return $this;
     }
 
+    /**
+     * @return Collection<int, DemandeDevis>
+     */
     public function getDemandesDevis(): Collection
     {
         return $this->demandesDevis;
@@ -98,14 +114,19 @@ class Prestation
         }
         return $this;
     }
-
-    public function removeDemandeDevi(DemandeDevis $demandeDevi): static
-    {
-        if ($this->demandesDevis->removeElement($demandeDevi)) {
-            if ($demandeDevi->getPrestation() === $this) {
-                $demandeDevi->setPrestation(null);
-            }
+public function removeDemandeDevi(DemandeDevis $demandeDevi): static
+{
+    if ($this->demandesDevis->removeElement($demandeDevi)) {
+        if ($demandeDevi->getPrestation() === $this) {
+            $demandeDevi->setPrestation(null);
         }
-        return $this;
     }
+
+    return $this;
+}
+
+public function __toString(): string
+{
+    return $this->titre ?? 'Prestation';
+}
 }
