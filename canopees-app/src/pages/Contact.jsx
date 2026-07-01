@@ -3,8 +3,8 @@ import { useState,useEffect } from "react";
 export default function Contact() {
   const [status, setStatus] = useState('idle');
   const [prestations, setPrestations] = useState([]);
+ 
 
-  
   useEffect(() => {
     fetch('http://127.0.0.1:8000/api/prestations')
       .then((res) => res.json())
@@ -22,6 +22,12 @@ export default function Contact() {
 
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
+
+    if (!data.prestation_id) {
+        alert("Veuillez sélectionner une prestation.");
+        setStatus('idle');
+        return;
+    }
 
     
     const payload = {
@@ -89,7 +95,15 @@ export default function Contact() {
                 </div>
                 <input type="text" name="budget" placeholder="Budget estimé (ex: 500€)" />
                 <input type="text" name="adresse" placeholder="Adresse des travaux (Ville, Code Postal)" required />
-                <div className="label-date">
+             <select name="prestation_id" required className="select-prestation">
+    <option value="">-- Choisissez une prestation --</option>
+    {prestations.map((p) => (
+      <option key={p.id} value={p.id}>
+        {p.titre}
+      </option>
+    ))}
+  </select>
+              <div className="label-date">
                   <label htmlFor="date-debut">Début souhaité des travaux :</label>
                   <input type="date" id="date-debut" name="debut_travaux" />
                 </div>

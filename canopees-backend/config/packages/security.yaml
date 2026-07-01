@@ -42,7 +42,7 @@ security:
         - { path: ^/api, roles: PUBLIC_ACCESS, methods: [GET] }
         
         # 2. Require ADMIN role for any other API method (POST, PUT, DELETE, etc.)
-        - { path: ^/api, roles: ROLE_ADMIN }
+        - { path: ^/api/demande_devis, roles: PUBLIC_ACCESS, methods: [POST] }
         
         # 3. Standard admin interface protection
         - { path: ^/admin, roles: ROLE_ADMIN }
